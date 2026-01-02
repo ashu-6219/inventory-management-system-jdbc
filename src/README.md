@@ -18,6 +18,9 @@ A backend-focused Inventory Management System built using Java and JDBC.
 - View all products
 - Update stock (IN / OUT)
 - Transaction-safe stock updates
+- Low stock alerts
+- Search by category
+- Delete product
 - Service-layer based business logic
 
 ---
