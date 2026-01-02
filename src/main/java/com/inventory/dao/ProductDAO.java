@@ -27,8 +27,8 @@ public class ProductDAO {
         String sql = "SELECT * FROM products";
 
         try (Connection con = DBUtil.getConnection();
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Product p = new Product(
@@ -49,18 +49,22 @@ public class ProductDAO {
     }
 
     // update quantity
-    public void updateQuantity(int productId, int newQuantity) {
+    public void updateQuantity(int productId, int newQuantity, Connection con) throws SQLException {
         String sql = "UPDATE products SET quantity = ? WHERE id = ?";
-
-        try (Connection con = DBUtil.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, newQuantity);
             ps.setInt(2, productId);
             ps.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+    }
+
+    public int getQuantityByProductId(int productId, Connection con) throws SQLException {
+        String sql = "SELECT quantity FROM products WHERE id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt("quantity");
+        }
+        return -1;
     }
 }
