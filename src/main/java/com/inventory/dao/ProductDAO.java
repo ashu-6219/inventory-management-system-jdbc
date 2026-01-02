@@ -17,7 +17,7 @@ public class ProductDAO {
             ps.executeUpdate();
             System.out.println("Product added successfully");
         }catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -42,7 +42,7 @@ public class ProductDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         return products;
@@ -67,4 +67,70 @@ public class ProductDAO {
         }
         return -1;
     }
+
+    //view low stock products
+    public List<Product> getLowStockProducts(int threshold){
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM products WHERE quantity < ?";
+        try(Connection con = DBUtil.getConnection();
+        PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, threshold);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                products.add(new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getDouble("price"),
+                        rs.getInt("quantity")
+                ));
+            }
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return products;
+    }
+
+    public void deleteProduct(int productId) {
+        String sql = "DELETE FROM products WHERE id = ?";
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, productId);
+            ps.executeUpdate();
+            System.out.println("Product deleted");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public List<Product> getProductsByCategory(String category) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM products WHERE category = ?";
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, category);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                products.add(new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getDouble("price"),
+                        rs.getInt("quantity")
+                ));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return products;
+    }
+
 }
