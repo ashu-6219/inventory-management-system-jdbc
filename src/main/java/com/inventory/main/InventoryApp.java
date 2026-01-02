@@ -15,7 +15,10 @@ public class InventoryApp {
             System.out.println("2. View All Products");
             System.out.println("3. Stock IN");
             System.out.println("4. Stock OUT");
-            System.out.println("5. Exit");
+            System.out.println("5. View Low Stock Products");
+            System.out.println("6. View Products By Category");
+            System.out.println("7. Delete Product");
+            System.out.println("8. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = sc.nextInt();
@@ -80,6 +83,44 @@ public class InventoryApp {
                     break;
 
                 case 5:
+                    List<Product> lowStock = productDAO.getLowStockProducts(5);
+                    System.out.println("\n LOW STOCK PRODUCTS");
+                    for(Product p : lowStock){
+                        System.out.println(
+                                p.getId() + " | " +
+                                p.getName() + " | " +
+                                p.getQuantity()
+                        );
+                    }
+                    break;
+
+                case 6:
+                    sc.nextLine(); // consume newline
+                    System.out.print("Enter category: ");
+                    String cat = sc.nextLine();
+
+                    List<Product> categoryProducts = productDAO.getProductsByCategory(cat);
+
+                    if (categoryProducts.isEmpty()) {
+                        System.out.println("No products found for category: " + cat);
+                    } else {
+                        System.out.println("\n--- PRODUCTS IN CATEGORY: " + cat + " ---");
+                        for (Product p : categoryProducts) {
+                            System.out.println(
+                                    p.getId() + " | " + p.getName() + " | " + p.getPrice() + " | Qty: " + p.getQuantity()
+                            );
+                        }
+                    }
+                    break;
+
+                case 7:
+                    System.out.print("Enter product ID to delete: ");
+                    int deleteId = sc.nextInt();
+
+                    productDAO.deleteProduct(deleteId);
+                    break;
+
+                case 8:
                     System.out.println("Exiting Inventory System...");
                     sc.close();
                     System.exit(0);
